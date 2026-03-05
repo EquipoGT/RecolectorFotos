@@ -233,20 +233,7 @@
   .pill-text { font-size: 11px; color: var(--muted); line-height: 1.4; }
   .pill-text strong { color: var(--text); font-weight: 500; display: block; }
 
-  /* Config */
-  .cfg-toggle { text-align: center; margin-top: 28px; animation: fadeUp 0.6s 0.35s ease both; }
-  .cfg-toggle button { background: none; border: 1px solid var(--border); color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: 12px; padding: 7px 16px; border-radius: 100px; cursor: pointer; transition: 0.2s; }
-  .cfg-toggle button:hover { border-color: var(--accent); color: var(--accent); }
-  .cfg-panel { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-top: 10px; animation: fadeUp 0.3s ease both; }
-  .cfg-panel.show { display: block; }
-  .cfg-panel h3 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-  .cfg-panel p { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
-  .cfg-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: monospace; font-size: 12px; padding: 10px 13px; outline: none; transition: 0.2s; margin-bottom: 10px; }
-  .cfg-input:focus { border-color: var(--accent); }
-  .btn-save { background: var(--surface2); border: 1px solid var(--border); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 8px 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-  .btn-save:hover { border-color: var(--accent3); }
-  .toast { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--success); margin-left: 10px; opacity: 0; transition: opacity 0.3s; }
-  .toast.show { opacity: 1; }
+
 
   @keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
   @keyframes popIn { from { opacity:0; transform:scale(0.75); } to { opacity:1; transform:scale(1); } }
@@ -314,48 +301,19 @@
     <button class="btn-reset" onclick="resetAll()">Enviar más fotos</button>
   </div>
 
-  <!-- Info pills -->
-  <div class="pills">
-    <div class="pill"><span class="pill-icon">🔒</span><div class="pill-text"><strong>Sin registro</strong>No se necesita cuenta</div></div>
-    <div class="pill"><span class="pill-icon">👁️</span><div class="pill-text"><strong>Solo envío</strong>No ves fotos ajenas</div></div>
-    <div class="pill"><span class="pill-icon">☁️</span><div class="pill-text"><strong>Cloudflare R2</strong>Alta disponibilidad</div></div>
-  </div>
 
-  <!-- Config -->
-  <div class="cfg-toggle">
-    <button onclick="toggleCfg()">⚙️ Configurar URL del Worker</button>
-  </div>
-  <div class="cfg-panel" id="cfgPanel">
-    <h3>🔗 URL de tu Cloudflare Worker</h3>
-    <p>Pega aquí la URL de tu Worker. Se guarda solo en este navegador y nunca se comparte.</p>
-    <input class="cfg-input" id="workerUrl" type="url" placeholder="https://mi-worker.tuusuario.workers.dev">
-    <div>
-      <button class="btn-save" onclick="saveCfg()">Guardar</button>
-      <span class="toast" id="toast">✓ Guardado</span>
-    </div>
-  </div>
+
+
 
 </div>
 
 <script>
 // ── Config ────────────────────────────────────────────────────
-const CFG_KEY = 'cf_worker_url';
+// IMPORTANTE: Reemplaza esta URL con la de tu Worker
+const WORKER_URL = 'https://recibir-fotos.equipodetrabajogt.workers.dev';
+
 let files = [];       // { file, status: 'pending'|'uploading'|'done'|'error' }
 let failedIndexes = [];
-
-const workerInput = document.getElementById('workerUrl');
-workerInput.value = localStorage.getItem(CFG_KEY) || '';
-
-function saveCfg() {
-  localStorage.setItem(CFG_KEY, workerInput.value.trim());
-  const t = document.getElementById('toast');
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2000);
-}
-
-function toggleCfg() {
-  document.getElementById('cfgPanel').classList.toggle('show');
-}
 
 // ── File handling ─────────────────────────────────────────────
 const dz = document.getElementById('dz');
@@ -421,11 +379,7 @@ function updateBtn() {
 
 // ── Upload ────────────────────────────────────────────────────
 async function sendAll() {
-  const workerUrl = (localStorage.getItem(CFG_KEY) || '').trim();
-  if (!workerUrl) {
-    alert('⚙️ Primero configura la URL del Worker (botón al final de la página).');
-    return;
-  }
+  const workerUrl = WORKER_URL;
 
   const note = document.getElementById('note').value.trim();
   const timestamp = new Date().toISOString();
